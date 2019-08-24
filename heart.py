@@ -37,18 +37,19 @@ def crossValidate(dataTup, trainSize=0.8):
 
 
 dataTup = loadData("heartdataset.csv")
-trainingData, trainingTargets, testingData, testingTargets = crossValidate(dataTup)
 
-classifier = svm.SVC(gamma=0.0001, C=100)
-classifier.fit(trainingData, trainingTargets)
+for g in range(1,1000):
+    for c in range(1,1000,50):
+        trainingData, trainingTargets, testingData, testingTargets = crossValidate(dataTup)
 
-total = 0
-correct = 0
-for X, Y in zip(testingData, testingTargets):
-    if int(classifier.predict([X])) == Y:
-        correct += 1
-    total += 1
-print(correct/total)
+        classifier = svm.SVC(gamma=g/1000000000, C=c)
+        classifier.fit(trainingData, trainingTargets)
 
-# print("data: {0}\ntarget: {1}\npred: {2}".format(
-#     data[i], targets[i], classifier.predict([data[i]])))
+        total = 0
+        correct = 0
+        for X, Y in zip(testingData, testingTargets):
+            if classifier.predict([X]) == Y:
+                correct += 1
+            total += 1
+        if (correct/total > 0.85):
+            print(g/100000000, c)
