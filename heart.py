@@ -2,21 +2,31 @@ import numpy as np
 from sklearn import svm
 
 # load data
-X = []
-Y = []
+Xs = []
+Ys = []
 with open("heartdataset.csv") as dataCSV:
     for i, row in enumerate(dataCSV):
         if (i > 0):
             arrayRow = map(lambda x: x.strip(), row.split(","))
             cleanedRow = list(map(lambda y: float(y), arrayRow))
 
-            X.append(np.array(cleanedRow[:-1]))
-            Y.append(np.array(cleanedRow[-1]))
-            
-print(X[2], Y[2])
+            Xs.append(cleanedRow[:-1])
+            Ys.append(cleanedRow[-1])
+Xs = np.array(Xs)
+Ys = np.array(Ys)
 
 # init svm
-# classifier = svm.SVC(gamma=0.001, C=100)
-# classifier.fit(X[:-1], Y[:-1])
+classifier = svm.SVC(gamma='auto')
+i = int(4*len(Xs)/5)
+classifier.fit(Xs[:i], Ys[:i])
 
-# print("Prediction of last: ", classifier.predict(X[-1].reshape(-1,1)))
+total = 0
+correct = 0 
+for X,Y in zip(Xs[i:], Ys[i:]):
+    if int(classifier.predict([X])) == Y:
+        correct += 1
+    total += 1
+print(correct/total)
+
+# print("data: {0}\ntarget: {1}\npred: {2}".format(
+#     Xs[i], Ys[i], classifier.predict([Xs[i]])))
